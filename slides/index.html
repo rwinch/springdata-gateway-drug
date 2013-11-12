@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+<meta content="Asciidoctor 0.1.4" name="generator">
+<meta content="@rob_winch" name="author">
+<title>Spring Data&#8230;a Gateway Drug</title>
+<link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
+<link href="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css" rel="stylesheet">
+<script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
+<script>document.addEventListener('DOMContentLoaded', prettyPrint)</script>
+<link href="deck.js/core/deck.core.css" rel="stylesheet">
+<link href="deck.js/extensions/goto/deck.goto.css" rel="stylesheet">
+<link href="deck.js/extensions/menu/deck.menu.css" rel="stylesheet">
+<link href="deck.js/extensions/navigation/deck.navigation.css" rel="stylesheet">
+<link href="deck.js/extensions/status/deck.status.css" rel="stylesheet">
+<link href="deck.js/extensions/hash/deck.hash.css" rel="stylesheet">
+<link href="deck.js/themes/style/springone13.css" rel="stylesheet">
+<link href="deck.js/themes/transition/horizontal-slide.css" id="transition-theme-link" rel="stylesheet">
+<script src="deck.js/modernizr.custom.js"></script>
+</head>
+<body class="deck-container article">
+<section class="slide" id="title-slide">
+<h1>Spring Data&#8230;a Gateway Drug</h1>
+<span id="author">@rob_winch</span>
+<br>
+</section>
+<section class="slide" id="_about_me">
+<h2>About me</h2>
+<div class="ulist">
+<ul>
+<li>Open source fanatic</li>
+<li>Spring Security and Spring LDAP Project Lead</li>
+<li>Committer on Spring Framework</li>
+<li><p>
+Co-author of Spring Security 3.1 book<div class="imageblock">
+<div class="content">
+<img alt="spring security31 book" src="images/spring-security31-book.jpg">
+</div>
+</div></p></li>
+</ul>
+</div>
+</section>
+
+<section class="slide" id="_agenda">
+<h2>Agenda</h2>
+<div class="ulist">
+<ul>
+<li>Spring.io</li>
+<li><p>
+Problem with existing tools<div class="ulist">
+<ul>
+<li>Demo with JPA</li>
+<li>Generic DAO  - "Cook up own GenericDAO"</li>
+<li>What about find by name?</li>
+<li>Type safe?</li>
+</ul>
+</div></p></li>
+<li><p>
+Spring Data example<div class="ulist">
+<ul>
+<li>main method</li>
+<li>finders</li>
+<li>querydsl</li>
+<li>auditing</li>
+</ul>
+</div></p></li>
+<li><p>
+Web tier<div class="ulist">
+<ul>
+<li>lookup our values</li>
+<li>translate to errors</li>
+<li>Spring Data&#8217;s MVC integration</li>
+</ul>
+</div></p></li>
+<li><p>
+Spring Data Rest<div class="ulist">
+<ul>
+<li>Hateoas</li>
+</ul>
+</div></p></li>
+<li>restshell</li>
+</ul>
+</div>
+</section>
+
+<section class="slide" id="_spring_io">
+<h2>spring.io</h2>
+<div class="paragraph"><p>Who can tell me the components of Spring?</p></div>
+
+<div style="page-break-after: always"></div>
+
+<div class="ulist">
+<ul>
+<li>Core (IoC, AOP, Web)</li>
+<li>Data</li>
+<li>Security</li>
+<li>Integration / Batch</li>
+<li>Groovy / Grails</li>
+<li>Reactor</li>
+<li>Boot</li>
+<li>XD</li>
+</ul>
+</div>
+</section>
+
+<section class="slide canvas-image" id="_spring_io_2" style="background-image: url(images/spring-io.png)">
+
+</section>
+
+<section class="slide" id="_plenty_of_orm_tools_for_java">
+<h2>Plenty of ORM tools for Java</h2>
+<div class="ulist">
+<ul>
+<li>Hibernate</li>
+<li>EclipseLink</li>
+<li>Toplink</li>
+<li>JPA</li>
+<li>many more&#8230;</li>
+</ul>
+</div>
+</section>
+
+<section class="slide" id="_standard_jpa">
+<h2>Standard JPA</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>// ... accessor methods omitted ...
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>// ... accessor methods omitted ...
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>// ...
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="ulist">
+<ul>
+<li>Still have not implemented sorting</li>
+<li>Even longer with queries that contain <code>Predicate</code> instances</li>
+<li><p>
+Could create generic DAO<div class="ulist">
+<ul>
+<li>What about our custom queries?</li>
+<li>What about non-relational databases?</li>
+</ul>
+</div></p></li>
+</ul>
+</div>
+</section>
+
+<section class="slide" id="_spring_data_repositories">
+<h2>Spring Data Repositories</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div class="ulist">
+<ul>
+<li>Provides standard CRUD methods</li>
+<li>Supports paging and sorting</li>
+<li><code>Page</code> contains results and count of all entities that match</li>
+</ul>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_property_expressions">
+<h2>Property Expressions</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_paging_and_sorting">
+<h2>Paging and Sorting</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_naming_conventions">
+<h2>Naming Conventions</h2>
+<div class="listingblock">
+<div class="title">Find by multiple properties</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>// Find by two properties
+List&lt;User&gt; findByEmailAndLastName(String email, String lastName);</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Starts With</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Like</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Find ignoring case</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Ordering</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>// Enabling static ORDER BY for a query
+List&lt;User&gt; findByLastNameOrderByFirstNameAsc(String lastName);</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="paragraph"><p>Refer to the reference for <a href="http://docs.spring.io/spring-data/jpa/docs/1.4.2.RELEASE/reference/htmlsingle/#d0e1509">more</a> samples</p></div>
+</section>
+
+<section class="slide" id="_named_queries">
+<h2>Named Queries</h2>
+<div class="paragraph"><p>Method names can get quite long and complex when using conventions</p></div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>@Entity
+@NamedQuery(name = "<strong>User</strong>.<strong>findByName</strong>", query =
+  "select u from User u where u.firstName = ?1 and u.lastName = ?2")
+public class User { /* ... */ }
+
+public interface UserRepository extends JpaRepository&lt;<strong>User</strong>, Long&gt; {
+
+  User <strong>findByName</strong>(String firstName, String lastName);
+}</code></pre>
+</div>
+</div>
+
+<div class="ulist">
+<ul>
+<li>Entity type matches first part of <code>@NamedQuery</code></li>
+<li>Method name matches second part of <code>@NamedQuery</code></li>
+</ul>
+</div>
+</section>
+
+<section class="slide" id="_annotating_methods">
+<h2>Annotating Methods</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>public interface UserRepository extends JpaRepository&lt;User, Long&gt; {
+
+  @Query("select u from User u where "
+             + " u.firstName = ?1 and u.lastName = ?2")
+  User findByName(String firstName, String lastName);
+}</code></pre>
+</div>
+</div>
+</section>
+
+<section class="querydsl slide" id="_querydsl">
+<h2>Querydsl</h2>
+<div class="paragraph"><p><a href="http://www.querydsl.com/">Querydsl</a> offers a vendor neutral alternative to <code>CriteriaBuilder</code> and <code>Metamodel</code></p></div>
+
+<div class="ulist">
+<ul>
+<li>Code completion</li>
+<li>Eases Refactoring</li>
+<li><p>
+Support for many data stores<div class="ulist">
+<ul>
+<li>JPA</li>
+<li>Mongo</li>
+<li>Lucene</li>
+<li>others &#8230;</li>
+</ul>
+</div></p></li>
+</ul>
+</div>
+</section>
+
+<section class="querydsl slide" id="_querydsl_2">
+<h2>Querydsl</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint xml language-xml"><code>&lt;plugin&gt;
+  &lt;groupId&gt;com.mysema.maven&lt;/group
+  &lt;artifactId&gt;apt-maven-plugin&lt;/artifactId&gt;
+  &lt;version&gt;1.1.1&lt;/version&gt;
+  &lt;executions&gt;
+    &lt;execution&gt;
+	  &lt;!-- ... --&gt;
+    &lt;/execution&gt;
+  &lt;/executions&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+</section>
+
+<section class="querydsl slide" id="_querydsl_3">
+<h2>Querydsl</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint xml language-xml"><code>&lt;execution&gt;
+  &lt;goals&gt;
+    &lt;goal&gt;process&lt;/goal&gt;
+  &lt;/goals&gt;
+  &lt;configuration&gt;
+    &lt;outputDirectory&gt;
+      target/generated-sources/java
+    &lt;/outputDirectory&gt;
+    &lt;processor&gt;
+      com.mysema.query.apt.jpa.JPAAnnotationProcessor
+    &lt;/processor&gt;
+  &lt;/configuration&gt;
+&lt;/execution&gt;</code></pre>
+</div>
+</div>
+</section>
+
+<section class="querydsl slide" id="_querydsl_4">
+<h2>Querydsl</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+</section>
+
+<section class="querydsl slide" id="_querydsl_5">
+<h2>Querydsl</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+</section>
+
+<section class="querydsl slide" id="_querydsl_6">
+<h2>Querydsl</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+</section>
+
+<section class="querydsl slide" id="_querydsl_7">
+<h2>Querydsl</h2>
+<div class="listingblock">
+<div class="title">First and Last</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+</section>
+
+<section class="querydsl slide" id="_querydsl_8">
+<h2>Querydsl</h2>
+<div class="listingblock">
+<div class="title">First or Last</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_spring_data_initialization">
+<h2>Spring Data Initialization</h2>
+<div class="listingblock">
+<div class="title">Standalone Initialization</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">CDI integration</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>class EntityManagerFactoryProducer {
+
+  @Produces
+  @ApplicationScoped
+  public EntityManagerFactory createEntityManagerFactory() {
+    return Persistence.createEntityManagerFactory("my-presistence-unit");
+  }
+
+  public void close(@Disposes EntityManagerFactory entityManagerFactory) {
+    entityManagerFactory.close();
+  }
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">CDI consumption</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>class RepositoryClient {
+
+  @Inject
+  UserRepository repository;
+
+  public void businessMethod() {
+
+    List&lt;User&gt; users = repository.findAll();
+  }
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Spring Java Configuration</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>// ... standard JPA initialization ...
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Spring XML Configuration</div>
+<div class="content">
+<pre class="prettyprint xml language-xml"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/data/jpa"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/data/jpa
+    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"&gt;
+
+  &lt;repositories base-package="com.acme.repositories" /&gt;
+
+&lt;/beans:beans&gt;</code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_populating_data_stores">
+<h2>Populating Data Stores</h2>
+<div class="paragraph"><p>Possible to populate data stores with XML or JSON</p></div>
+
+<div class="listingblock">
+<div class="title">data.json</div>
+<div class="content">
+<pre class="prettyprint json language-json"><code>[ {
+  "_class" : "sample.domain.User",
+  "firstName" : "Rob",
+  "lastName" : "Winch",
+  "email" : "rob@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Oliver",
+  "lastName" : "Gierke",
+  "email" : "ollie@example.com"
+}]</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Sample Java Configuration</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code></code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint xml language-xml"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:repository="http://www.springframework.org/schema/data/repository"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/data/repository
+    http://www.springframework.org/schema/data/repository/spring-repository.xsd"&gt;
+
+  &lt;repository:jackson-populator location="classpath:data.json" /&gt;
+
+&lt;/beans&gt;</code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_web_teir">
+<h2>Web Teir</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>@Inject
+private UserRepository userRepository;
+
+@Path("/users/{id}")
+public User view(@PathParam("id") Long id) {
+    // Find the User based on the id path parameter
+    User user = userRepository.findOne(id);
+    ...
+    return user;
+}</code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_spring_web_mvc">
+<h2>Spring Web MVC</h2>
+<div class="paragraph"><p>Easier in Spring MVC</p></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>@RequestMapping("{id}")
+public Message view(@PathVariable("id") Message message) {
+    // no need to lookup the entity,
+    // Spring MVC uses the repository automatically
+    return message;
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>class WebConfiguration extends WebMvcConfigurationSupport {
+
+  // ...
+
+  @Bean
+  public DomainClassConverter&lt;?&gt; domainClassConverter() {
+    return new DomainClassConverter&lt;FormattingConversionService&gt;(mvcConversionService());
+  }
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Automatic Pagable resololution</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>@RequestMapping
+public String showUsers(Model model, Pageable pageable) {
+
+    model.addAttribute("users", userRepository.findAll(pageable));
+    return "users";
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<table class="tableblock frame-all grid-all" style="width:100%">
+<colgroup>
+<col style="width:25%">
+<col style="width:50%">
+<col style="width:25%">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Parameter Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">page</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Page you want to retrieve.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">page.size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Size of the page you want to retrieve.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">page.sort</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Property that should be sorted by.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">lastName</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">page.sort.dir</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Direction that should be used for sorting.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ASC</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+<section class="slide" id="_spring_data_rest">
+<h2>Spring Data Rest</h2>
+<div class="ulist">
+<ul>
+<li>Maps Spring Data Repository instances to RESTful endpoints</li>
+<li>Automatic Hypermedia as the Engine of Application State (HATEOAS) support</li>
+<li>Search through query methods</li>
+<li>Validation using JSR-303 or Spring Validator beans</li>
+<li>Extensibility</li>
+<li>Support for JPA, MongoDB, Gemfire, and Neo4J Repositories</li>
+</ul>
+</div>
+</section>
+
+<section class="slide" id="_spring_data_rest_configuration">
+<h2>Spring Data Rest Configuration</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>@Configuration
+public class RepositoryMvcConfiguration
+      extends RepositoryRestMvcConfiguration {
+    // ...
+}</code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="__restresource">
+<h2>@RestResource</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code><strong>@RestResource (path = "messages", rel = "messages")</strong>
+public interface MessageRepository
+      extends JpaRepository&lt;Message, Long&gt; {
+   // ...
+}</code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_notes">
+<h2>NOTES</h2>
+<div class="ulist">
+<ul>
+<li>Caught with pants down</li>
+<li>Greedy "How much is enough?"</li>
+</ul>
+</div>
+
+<div class="paragraph"><p>Quotes
+* Saul: That’s what the kids call ‘epic fail.’
+* Saul - Look, let’s start with some tough love.
+* Walter: We’re done when I say we’re done.
+* Jesse: Yeah, Mr. White! Yeah, science!</p></div>
+</section>
+
+<a class="deck-permalink" href="." title="Permalink to this slide">#</a>
+<script src="deck.js/jquery-1.7.2.min.js"></script>
+<script src="deck.js/core/deck.core.js"></script>
+<script src="deck.js/core/deck.core.js"></script>
+<script src="deck.js/extensions/hash/deck.hash.js"></script>
+<script src="deck.js/extensions/menu/deck.menu.js"></script>
+<script src="deck.js/extensions/goto/deck.goto.js"></script>
+<script src="deck.js/extensions/status/deck.status.js"></script>
+<script src="deck.js/extensions/navigation/deck.navigation.js"></script>
+<script src="deck.js/extensions/scale/deck.scale.js"></script>
+<script src="deck.js/extensions/deck.split.js"></script>
+<script>
+  $(function() {
+    $.deck('.slide');
+  });
+</script>
+<style>
+  .slide.canvas-image {
+  -moz-background-size: cover;
+  -webkit-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  display: -moz-box;
+  display: -webkit-box;
+  display: -ms-box;
+  display: box;
+  -moz-box-orient: vertical;
+  -webkit-box-orient: vertical;
+  -ms-box-orient: vertical;
+  box-orient: vertical;
+  -moz-box-align: start;
+  -webkit-box-align: start;
+  -ms-box-align: start;
+  box-align: start;
+  -moz-box-pack: start;
+  -webkit-box-pack: start;
+  -ms-box-pack: start;
+  box-pack: start;}
+  
+  .bottom-left {
+    left: 1%;
+    bottom: 20%; }
+  
+  .top-left {
+    left: 1%;
+    top: 20%; }
+  
+  .bottom-right {
+    right: 1%;
+    bottom: 20%; }
+  
+  .top-right {
+    right: 1%;
+    top: 20%; }
+  
+  .center-up {
+    right: 50%;
+    top: 1%;
+  }
+  
+  .center-down {
+    right: 50%;
+    bottom: 1%;
+  }
+  .canvas-image .canvas-caption p {
+    text-align: center;
+    padding-top: 0;
+    padding: 0;
+    -moz-transform: none;
+    -webkit-transform: none;
+    -o-transform: none;
+    -ms-transform: none;
+    transform: none;
+    display: inline;
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    font-weight: bold;
+    font-size: 58px;
+    -webkit-box-shadow: 2px 2px 2px #000;
+    -moz-box-shadow: 2px 2px 2px #000;
+    box-shadow: 2px 2px 2px #000;
+    padding: 1rem;
+    color: white; }
+</style>
+</body>
+</html>

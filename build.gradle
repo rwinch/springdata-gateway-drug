@@ -1,0 +1,52 @@
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'eclipse-wtp'
+apply plugin: 'idea'
+apply from: 'gradle/maven.gradle'
+
+ext.springVersion = '3.2.4.RELEASE'
+ext.querydslVersion = '3.2.4'
+
+group = 'sample'
+version = '0.0.1.BUILD-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+    maven { url "http://repo.spring.io/snapshot" }
+}
+
+dependencies {
+    providedCompile "javax.servlet:javax.servlet-api:3.0.1"
+
+
+    compile "org.hibernate.javax.persistence:hibernate-jpa-2.0-api:1.0.0.Final",
+            "org.hibernate:hibernate-entitymanager:4.1.6.Final",
+            "com.h2database:h2:1.3.168",
+            "opensymphony:sitemesh:2.4.2",
+            "javax.validation:validation-api:1.0.0.GA",
+            "org.hibernate:hibernate-validator:4.2.0.Final",
+            "org.springframework:spring-webmvc:$springVersion",
+            "org.springframework:spring-orm:$springVersion",
+            "org.springframework:spring-context:$springVersion",
+            "org.springframework:spring-aop:$springVersion",
+            "org.springframework:spring-tx:$springVersion",
+            "org.springframework:spring-beans:$springVersion",
+            "org.springframework:spring-instrument:$springVersion",
+            "org.springframework:spring-core:$springVersion",
+            "org.springframework:spring-aspects:$springVersion",
+            "org.springframework.data:spring-data-jpa:1.3.0.RELEASE",
+            "org.springframework.data:spring-data-rest-webmvc:1.1.0.M1",
+            "org.springframework.hateoas:spring-hateoas:0.6.0.RELEASE",
+            "com.mysema.querydsl:querydsl-apt:${querydslVersion}",
+            "com.mysema.querydsl:querydsl-jpa:${querydslVersion}",
+            "ch.qos.logback:logback-classic:1.0.13",
+            "com.fasterxml.jackson.core:jackson-databind:2.2.2",
+            "org.codehaus.jackson:jackson-mapper-asl:1.9.12",
+            "com.jayway.jsonpath:json-path:0.9.0"
+
+    testCompile "junit:junit:4.11",
+                "org.springframework:spring-test:${springVersion}",
+                "org.easytesting:fest-assert:1.4"
+
+}
+

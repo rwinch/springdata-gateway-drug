@@ -1,0 +1,56 @@
+[{
+  "_class" : "sample.domain.User",
+  "firstName" : "Rob",
+  "lastName" : "Winch",
+  "email" : "rob@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Oliver",
+  "lastName" : "Gierke",
+  "email" : "ollie@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Josh",
+  "lastName" : "Long",
+  "email" : "josh@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Rod",
+  "lastName" : "Johnson",
+  "email" : "rod@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Juergen",
+  "lastName" : "Hoeller",
+  "email" : "juergen@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Chris",
+  "lastName" : "Beams",
+  "email" : "chris@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Phil",
+  "lastName" : "Webb",
+  "email" : "phil@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Luke",
+  "lastName" : "Taylor",
+  "email" : "luke@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Brian",
+  "lastName" : "Clozel",
+  "email" : "brian@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Dave",
+  "lastName" : "Syer",
+  "email" : "dave@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Greg",
+  "lastName" : "Turnquist",
+  "email" : "greg@example.com"
+}]

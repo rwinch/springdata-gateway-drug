@@ -1,0 +1,11 @@
+[ {
+  "_class" : "sample.domain.User",
+  "firstName" : "Rob",
+  "lastName" : "Winch",
+  "email" : "rob@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Oliver",
+  "lastName" : "Gierke",
+  "email" : "ollie@example.com"
+}]
