@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.data.namingconventions;
+package test.sample.data.namingconventions;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -22,8 +22,8 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import sample.data.AbstractSpringTest;
 import sample.domain.User;
+import test.sample.data.AbstractSpringTest;
 
 public class NamingConventionsMessageRepositoryTest extends AbstractSpringTest {
     @Autowired

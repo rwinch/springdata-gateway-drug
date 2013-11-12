@@ -1,4 +1,4 @@
-= Spring Data...a Gateway Drug
+= pass:[<span class="pe" data-e="16">S</span>pring Data...a <span class="pe" data-e="31">Ga</span>teway Drug]
 @rob_winch
 :backend: deckjs
 :deckjs_theme: springone13
@@ -10,7 +10,7 @@
 :pom: ../pom.xml
 :sample-dir: ../src/main/java/sample
 :user-predicates: {sample-dir}/data/UserPredicates.java
-:test-sample-dir: ../src/test/java/sample
+:test-sample-dir: ../src/test/java/test/sample
 :user-repository-test: {test-sample-dir}/data/UserRepositoryTest.java
 :jpa-message-repository: {sample-dir}/jpa/JpaMessageRepository.java
 :data-message-repository: {sample-dir}/data/MessageRepository.java
@@ -27,31 +27,16 @@
 
 image::images/spring-security31-book.jpg[]
 
-== Agenda
-* Spring.io
-* Problem with existing tools 
-** Demo with JPA
-** Generic DAO  - "Cook up own GenericDAO"
-** What about find by name?
-** Type safe?
-* Spring Data example
-** main method
-** finders
-** querydsl
-** auditing
-* Web tier
-** lookup our values
-** translate to errors
-** Spring Data's MVC integration
-* Spring Data Rest
-** Hateoas
-* restshell
+<<<
 
-== spring.io
+image::images/breaking-bad-logo.jpeg[height="50%",width="50%"]
+
+
+== pass:[<span class="pe" data-e="16">s</span>]pring.io
 
 Who can tell me the components of Spring?
 
-<<<
+== pass:[<span class="pe" data-e="16">s</span>]pring.io
 
 * Core (IoC, AOP, Web)
 * Data
@@ -63,7 +48,7 @@ Who can tell me the components of Spring?
 * XD
 
 [canvas-image="images/spring-io.png",position="center-up"]
-== spring.io
+== pass:[<span class="pe" data-e="16">s</span>]pring.io
 
 == Plenty of ORM tools for Java 
 
@@ -73,8 +58,14 @@ Who can tell me the components of Spring?
 * JPA
 * many more...
 
-== Standard JPA
+== pass:[<span class="pe" data-e="16">S</span>]tandard JPA
 
+[source,xml]
+----
+include::../src/test/resources/META-INF/persistence.xml[]
+----
+
+<<<
 
 [source,java,indent=0]
 ----
@@ -140,7 +131,89 @@ include::{jpa-message-repository}[tags=findAllPagedRequestTotal]
 ** What about our custom queries?
 ** What about non-relational databases?
 
-== Spring Data Repositories
+== Caught with pants down?
+
+
+image::images/pants-down.jpg[]
+
+__Good job wearing the pants in the family!__ - Jessie
+
+== pass:[<span class="pe" data-e="16">S</span>]pring Data Initialization
+
+.Standalone Initialization
+[source,java,indent=0]
+----
+include::{test-sample-dir}/data/StandaloneMessageRepositoryTest.java[tags=setup]
+----
+
+<<<
+
+Spring Data's `JpaRepositoryExtension` will automatically integrate Spring Data with CDI.
+
+.CDI integration
+[source,java]
+----
+class EntityManagerFactoryProducer {
+
+  @Produces
+  @ApplicationScoped
+  public EntityManagerFactory createEntityManagerFactory() {
+    return Persistence.createEntityManagerFactory("my-presistence-unit");
+  }
+
+  public void close(@Disposes EntityManagerFactory entityManagerFactory) {
+    entityManagerFactory.close();
+  }
+}
+----
+
+<<<
+
+.CDI consumption
+[source,java]
+----
+class RepositoryClient {
+
+  @Inject
+  UserRepository repository;
+
+  public void businessMethod() {
+
+    List<User> users = repository.findAll();
+  }
+}
+----
+
+<<<
+
+.Spring Java Configuration
+[source,java,indent=0]
+----
+include::{sample-dir}/DataConfiguration.java[tags=summary]
+    // ... standard JPA initialization ...
+}
+----
+
+<<<
+
+.Spring XML Configuration
+[source,xml]
+----
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/data/jpa"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/data/jpa
+    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+  <repositories base-package="com.acme.repositories" />
+
+</beans:beans>
+----
+
+== pass:[<span class="pe" data-e="16">S</span>]pring Data pass:[<span class="pe" data-e="75">Re</span>]positories
 
 [source,java,indent=0]
 ----
@@ -153,9 +226,50 @@ include::{test-sample-dir}/data/basic/UserRepository.java[tags=classdef]
 
 <<<
 
-[source,java,indent=0]
+.Spring Bean consumption
+[source,java]
 ----
-include::{test-sample-dir}/data/basic/BasicUserRepositoryTest.java[tags=findOne]
+class RepositoryClient {
+
+  @Inject // can also use @Autowired
+  UserRepository repository;
+
+  public void businessMethod() {
+
+    List<User> users = repository.findAll();
+  }
+}
+----
+
+== Look ma...no implementation
+
+[options="step"]
+Where did my implementation go?
+
+[options="step"]
+[source,java]
+[subs="verbatim,quotes"]
+----
+**@EnableJpaRepositories**
+public class DataConfiguration {
+----
+
+== Yeah science!
+
+image::images/yeah-science.jpg[]
+
+== pass:[<span class="pe" data-e="16">Na</span>]mming pass:[<span class="pe" data-e="27">Co</span>]nventions
+
+.Many methods defined `CrudRepository` and `PagingAndSortingRepository`
+[source,java]
+----
+List<User> findAll();
+
+User findOne(Long id);
+
+User save(User user);
+
+Page<User> findAll(Pageable pageable);
 ----
 
 <<<
@@ -164,51 +278,38 @@ include::{test-sample-dir}/data/basic/BasicUserRepositoryTest.java[tags=findOne]
 ----
 include::{test-sample-dir}/data/basic/BasicUserRepositoryTest.java[tags=save]
 ----
-== Property Expressions
-
-[source,java,indent=0]
-----
-include::{test-sample-dir}/data/propertyexpressions/MessageRepository.java[tags=findByToLastName]
-----
-
-== Paging and Sorting
-
-[source,java,indent=0]
-----
-include::{test-sample-dir}/data/pagingandsorting/UserRepository.java[tags=methods]
-----
 
 <<<
 
-[source,java,indent=0]
-----
-include::{test-sample-dir}/data/pagingandsorting/PagingAndSortingUserRepositoryTest.java[tags=findByLastNameStartsWithSort]
-----
-
-<<<
-
-[source,java,indent=0]
-----
-include::{test-sample-dir}/data/pagingandsorting/PagingAndSortingUserRepositoryTest.java[tags=findByLastNameStartsWithPageable]
-----
-
-== Naming Conventions
-
-.Find by multiple properties
+.User
 [source,java]
+[subs="verbatim,quotes"]
 ----
-// Find by two properties
-List<User> findByEmailAndLastName(String email, String lastName);
+public class User {
+    private String **lastName**;
+
+    // ...
+}
+----
+
+[options="step"]
+.Find by lastName
+[source,java]
+[subs="verbatim,quotes"]
+----
+List<User> findBy**LastName**(String lastName);
 ----
 
 <<<
 
-.Starts With
+.Naming convention for using Starts With
 [source,java,indent=0]
 ----
 include::{test-sample-dir}/data/namingconventions/UserRepository.java[tags=findByLastNameStartsWith]
 ----
 
+[options="step"]
+.Example usage
 [source,java,indent=0]
 ----
 include::{test-sample-dir}/data/namingconventions/NamingConventionsMessageRepositoryTest.java[tags=findByLastNameStartsWith]
@@ -216,12 +317,14 @@ include::{test-sample-dir}/data/namingconventions/NamingConventionsMessageReposi
 
 <<<
 
-.Like
+.Naming convention for using Like
 [source,java,indent=0]
 ----
 include::{test-sample-dir}/data/namingconventions/UserRepository.java[tags=findByLastNameLike]
 ----
 
+[options="step"]
+.Example usage
 [source,java,indent=0]
 ----
 include::{test-sample-dir}/data/namingconventions/NamingConventionsMessageRepositoryTest.java[tags=findByLastNameLike]
@@ -246,9 +349,83 @@ List<User> findByLastNameOrderByFirstNameAsc(String lastName);
 
 <<<
 
+.Find by multiple properties
+[source,java]
+----
+// Find by two properties
+List<User> findByEmailAndLastName(String email, String lastName);
+----
+
+<<<
+
+Property Expressions
+
+.Message
+[source,java]
+[subs="verbatim,quotes"]
+----
+public class Message {
+    private User **to**;
+
+    // ...
+}
+----
+
+[options="step"]
+.User
+[source,java]
+[subs="verbatim,quotes"]
+----
+public class User {
+    private String **lastName**;
+
+    // ...
+}
+----
+
+[options="step"]
+[source,java,indent=0]
+----
+include::{test-sample-dir}/data/propertyexpressions/MessageRepository.java[tags=findByToLastName]
+----
+
+<<<
+
+.Sorting
+[source,java,indent=0]
+----
+include::{test-sample-dir}/data/pagingandsorting/UserRepository.java[tags=sorting]
+----
+
+[options="step"]
+.Example Usage
+[source,java,indent=0]
+----
+include::{test-sample-dir}/data/pagingandsorting/PagingAndSortingUserRepositoryTest.java[tags=findByLastNameStartsWithSort]
+----
+
+<<<
+
+.Paging
+[source,java,indent=0]
+----
+include::{test-sample-dir}/data/pagingandsorting/UserRepository.java[tags=paging]
+----
+
+[options="step"]
+.Example Usage
+[source,java,indent=0]
+----
+include::{test-sample-dir}/data/pagingandsorting/PagingAndSortingUserRepositoryTest.java[tags=findByLastNameStartsWithPageable]
+----
+
+<<<
+
 Refer to the reference for http://docs.spring.io/spring-data/jpa/docs/1.4.2.RELEASE/reference/htmlsingle/#d0e1509[more] samples
 
-== Named Queries
+
+
+== pass:[<span class="pe" data-e="16">Na</span>]med Queries
 
 Method names can get quite long and complex when using conventions
 
@@ -282,6 +459,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
   User findByName(String firstName, String lastName);
 }
 ----
+
+== I've Won
+
+image::images/ive-won.jpg[width="50%",height="50%"]
 
 [role="querydsl"]
 == Querydsl
@@ -375,80 +556,9 @@ include::{user-repository-test}[tags=firstNameLikeAndLastNameLikePredicate]
 include::{user-repository-test}[tags=firstNameLikeOrLastNameLikePredicate]
 ----
 
-== Spring Data Initialization
 
-.Standalone Initialization
-[source,java,indent=0]
-----
-include::{test-sample-dir}/data/StandaloneMessageRepositoryTest.java[tags=setup]
-----
 
-<<<
-
-.CDI integration
-[source,java]
-----
-class EntityManagerFactoryProducer {
-
-  @Produces
-  @ApplicationScoped
-  public EntityManagerFactory createEntityManagerFactory() {
-    return Persistence.createEntityManagerFactory("my-presistence-unit");
-  }
-
-  public void close(@Disposes EntityManagerFactory entityManagerFactory) {
-    entityManagerFactory.close();
-  }
-}
-----
-
-<<<
-
-.CDI consumption
-[source,java]
-----
-class RepositoryClient {
-
-  @Inject
-  UserRepository repository;
-
-  public void businessMethod() {
-
-    List<User> users = repository.findAll();
-  }
-}
-----
-
-<<<
-
-.Spring Java Configuration
-[source,java,indent=0]
-----
-include::{sample-dir}/DataConfiguration.java[tags=summary]
-    // ... standard JPA initialization ...
-}
-----
-
-<<<
-
-.Spring XML Configuration
-[source,xml]
-----
-<?xml version="1.0" encoding="UTF-8"?>
-<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://www.springframework.org/schema/data/jpa"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/data/jpa
-    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
-
-  <repositories base-package="com.acme.repositories" />
-
-</beans:beans>
-----
-
-== Populating Data Stores
+== pass:[<span class="pe" data-e="84">Po</span>]pulating Data pass:[<span class="pe" data-e="16">S</span>]tores
 
 Possible to populate data stores with XML or JSON
 
@@ -484,7 +594,7 @@ include::{test-sample-dir}/data/PopulatorTest.java[tags=jsonPopulator]
 </beans>
 ----
 
-== Web Teir
+== pass:[<span class="pe" data-e="74">W</span>]eb pass:[<span class="pe" data-e="22">Ti</span>]er
 
 [source,java]
 ----
@@ -500,7 +610,7 @@ public User view(@PathParam("id") Long id) {
 }
 ----
 
-== Spring Web MVC
+== pass:[<span class="pe" data-e="16">S</span>]pring pass:[<span class="pe" data-e="74">W</span>]eb MVC
 
 Easier in Spring MVC
 
@@ -565,7 +675,17 @@ public String showUsers(Model model, Pageable pageable) {
 | ASC
 |===
 
-== Spring Data Rest
+== pass:[<span class="pe" data-e="1">H</span>]ow much is enough?
+
+image::images/greedy.jpg[]
+
+__Please tell me…how much is enough?__ - Skyler
+
+[options="step"]
+
+__We’re done when I say we’re done.__ - Walter
+
+== pass:[<span class="pe" data-e="16">S</span>]pring Data pass:[<span class="pe" data-e="75">Re</span>]st
 
 * Maps Spring Data Repository instances to RESTful endpoints
 * Automatic Hypermedia as the Engine of Application State (HATEOAS) support
@@ -597,14 +717,30 @@ public interface MessageRepository
 }
 ----
 
+== rest-shell
 
-== NOTES
+[source,bash]
+----
+$ rest-shell
 
-* Caught with pants down
-* Greedy "How much is enough?"
+ ___ ___  __ _____  __  _  _     _ _  __    
+| _ \ __/' _/_   _/' _/| || |   / / | \ \   
+| v / _|`._`. | | `._`.| >< |  / / /   > >  
+|_|_\___|___/ |_| |___/|_||_| |_/_/   /_/   
+1.2.1.RELEASE
 
-Quotes
-* Saul: That’s what the kids call ‘epic fail.’
-* Saul - Look, let’s start with some tough love.
-* Walter: We’re done when I say we’re done.
-* Jesse: Yeah, Mr. White! Yeah, science!
+Welcome to the REST shell. For assistance hit TAB or type "help".
+http://localhost:8080:> discover
+rel         href                          
+==========================================
+user        http://localhost:8080/user    
+messages    http://localhost:8080/messages
+
+----
+
+== Learn More. Stay Connected.
+
+* http://rwinch.github.io/springdata-gateway-drug/
+* Spring Data: http://spring.io/spring-data
+* Twitter: @SpringData / @rob_winch / @springcentral
+* Find Talks on YouTube: spring.io/video

@@ -1,11 +1,11 @@
 [ {
   "_class" : "sample.domain.User",
-  "firstName" : "Rob",
-  "lastName" : "Winch",
-  "email" : "rob@example.com"
+  "firstName" : "Jon",
+  "lastName" : "Doe",
+  "email" : "jon@example.com"
 }, {
   "_class" : "sample.domain.User",
-  "firstName" : "Oliver",
-  "lastName" : "Gierke",
-  "email" : "ollie@example.com"
+  "firstName" : "Bob",
+  "lastName" : "Barker",
+  "email" : "bob@example.com"
 }]

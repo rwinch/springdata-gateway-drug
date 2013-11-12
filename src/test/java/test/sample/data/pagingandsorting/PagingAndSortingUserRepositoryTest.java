@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.data.pagingandsorting;
+package test.sample.data.pagingandsorting;
 
 import static org.fest.assertions.Assertions.assertThat;
 
@@ -26,8 +26,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
-import sample.data.AbstractSpringTest;
 import sample.domain.User;
+import test.sample.data.AbstractSpringTest;
 
 public class PagingAndSortingUserRepositoryTest extends AbstractSpringTest {
     @Autowired
@@ -45,7 +45,7 @@ public class PagingAndSortingUserRepositoryTest extends AbstractSpringTest {
         List<User> result = users.getContent();
         long totalMatches = users.getTotalElements();
 
-        // ... other methods ...
+        // ... Page has many other methods on it ...
         // end::findByLastNameStartsWithPageable[]
 
         assertThat(users.getTotalElements()).isEqualTo(2);
@@ -61,7 +61,7 @@ public class PagingAndSortingUserRepositoryTest extends AbstractSpringTest {
 
         long totalMatches = users.size();
 
-        // ... other methods ...
+        // ... use users ...
         // end::findByLastNameStartsWithSort[]
 
         assertThat(totalMatches).isEqualTo(2);

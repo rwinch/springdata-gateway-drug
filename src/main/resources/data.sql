@@ -1,3 +1,8 @@
+delete from message;
+delete from user;
+commit;
+
+
 insert into user(id,email,firstname,lastname) values (0,'rob@example.com','Rob','Winch');
 insert into user(id,email,firstname,lastname) values (1,'ollie@example.com','Oliver','Gierke');
 insert into user(id,email,firstname,lastname) values (2,'josh@example.com','Josh','Long');

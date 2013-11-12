@@ -13,15 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.data.basic;
+package test.sample.data.basic;
 
 import static org.fest.assertions.Assertions.assertThat;
 
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import sample.data.AbstractSpringTest;
 import sample.domain.User;
+import test.sample.data.AbstractSpringTest;
 
 public class BasicUserRepositoryTest extends AbstractSpringTest {
     @Autowired

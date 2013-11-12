@@ -13,24 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.data;
+package test.sample.data;
 
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.test.context.ActiveProfiles;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import sample.WebMvcConfiguration;
+import sample.data.MessageRepository;
+import sample.data.UserRepository;
 
-@ActiveProfiles("test")
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
-@ContextConfiguration(classes=WebMvcConfiguration.class)
+@ContextConfiguration(classes={WebMvcConfiguration.class, AbstractSpringTest.Config.class})
 public abstract class AbstractSpringTest {
+    @Configuration
+    @EnableJpaRepositories(basePackageClasses=AbstractSpringTest.class)
+    static class Config {
+
+    }
     @Autowired
     UserRepository userRepository;
 

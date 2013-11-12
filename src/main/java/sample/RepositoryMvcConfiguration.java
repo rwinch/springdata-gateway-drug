@@ -19,7 +19,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.rest.webmvc.config.RepositoryRestMvcConfiguration;
-import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.validation.Validator;
 
 /**
@@ -28,7 +27,6 @@ import org.springframework.validation.Validator;
  *
  */
 @Configuration
-@EnableHypermediaSupport
 public class RepositoryMvcConfiguration extends RepositoryRestMvcConfiguration {
 
     @Bean

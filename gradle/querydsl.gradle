@@ -1,0 +1,34 @@
+// Based on https://gist.github.com/EdwardBeckett/5377401
+
+sourceSets {
+    generated {
+        java {
+            srcDirs "$buildDir/generated-sources/java"
+        }
+    }
+}
+
+configurations {
+    querydslapt
+}
+
+task generateQueryDSL(type: JavaCompile) {
+    group = 'Build'
+    description = 'Generates the QueryDSL query types'
+
+    source = sourceSets.main.java
+    classpath = configurations.compile + configurations.querydslapt
+    options.compilerArgs = [
+            "-proc:only",
+            "-processor", "com.mysema.query.apt.jpa.JPAAnnotationProcessor"
+    ]
+    destinationDir = sourceSets.generated.java.srcDirs.iterator().next()
+
+    inputs.files sourceSets.main.java
+    outputs.dir destinationDir
+}
+
+compileJava {
+    dependsOn generateQueryDSL
+    source generateQueryDSL.destinationDir
+}

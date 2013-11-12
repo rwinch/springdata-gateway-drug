@@ -8,3 +8,5 @@ out
 *.iml
 target
 build
+src/generated
+*.log

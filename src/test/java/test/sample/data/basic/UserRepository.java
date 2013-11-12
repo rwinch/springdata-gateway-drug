@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.data.basic;
+package test.sample.data.basic;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Component;
 
 import sample.domain.User;
 
-@Profile("test")
 @Component("basic.UserRepository")
 // tag::classdef[]
 public interface UserRepository

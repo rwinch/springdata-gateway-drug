@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.data;
+package test.sample.data;
 
 import static org.fest.assertions.Assertions.assertThat;
 import static sample.data.UserPredicates.firstNameLike;

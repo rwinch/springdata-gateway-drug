@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToOne;
+import javax.persistence.Version;
 
 // tag::summary[]
 @Entity
@@ -18,6 +19,9 @@ public class Message {
     @OneToOne
     private User to;
     // end::summary[]
+
+    @Version
+    private Long version;
 
     public Long getId() {
         return id;

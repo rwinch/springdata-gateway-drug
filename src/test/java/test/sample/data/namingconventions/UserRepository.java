@@ -13,17 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.data.namingconventions;
+package test.sample.data.namingconventions;
 
 import java.util.List;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Component;
 
 import sample.domain.User;
 
-@Profile("test")
 @Component("namingconventions.UserRepository")
 public interface UserRepository
         extends PagingAndSortingRepository<User, Long> {

@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.data.propertyexpressions;
-
-import static org.fest.assertions.Assertions.assertThat;
+package test.sample.data.propertyexpressions;
 
 import java.util.List;
 
-import org.junit.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Component;
 
-import sample.data.AbstractSpringTest;
 import sample.domain.Message;
 
-public class PropertyExpressionMessageRepositoryTest extends AbstractSpringTest {
-    @Autowired
-    private MessageRepository repsitory;
+@Component("propertyexpressions.MessageRepository")
+public interface MessageRepository
+        extends PagingAndSortingRepository<Message, Long> {
 
-    @Test
-    public void findByLastName() {
-        List<Message> messages = repsitory.findByToLastName("Winch");
-
-        assertThat(messages.size()).isEqualTo(10);
-    }
+    // tag::findByToLastName[]
+    // Message.to.lastName == lastName
+    List<Message> findByToLastName(String lastName);
+    // end::findByToLastName[]
 }

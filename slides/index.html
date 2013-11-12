@@ -4,7 +4,7 @@
 <meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
 <meta content="Asciidoctor 0.1.4" name="generator">
 <meta content="@rob_winch" name="author">
-<title>Spring Data&#8230;a Gateway Drug</title>
+<title>Spring Data...a Gateway Drug</title>
 <link href="http://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
 <link href="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.css" rel="stylesheet">
 <script src="http://cdnjs.cloudflare.com/ajax/libs/prettify/r298/prettify.min.js"></script>
@@ -21,7 +21,7 @@
 </head>
 <body class="deck-container article">
 <section class="slide" id="title-slide">
-<h1>Spring Data&#8230;a Gateway Drug</h1>
+<h1><span class="pe" data-e="16">S</span>pring Data...a <span class="pe" data-e="31">Ga</span>teway Drug</h1>
 <span id="author">@rob_winch</span>
 <br>
 </section>
@@ -40,56 +40,23 @@ Co-author of Spring Security 3.1 book<div class="imageblock">
 </div></p></li>
 </ul>
 </div>
-</section>
-
-<section class="slide" id="_agenda">
-<h2>Agenda</h2>
-<div class="ulist">
-<ul>
-<li>Spring.io</li>
-<li><p>
-Problem with existing tools<div class="ulist">
-<ul>
-<li>Demo with JPA</li>
-<li>Generic DAO  - "Cook up own GenericDAO"</li>
-<li>What about find by name?</li>
-<li>Type safe?</li>
-</ul>
-</div></p></li>
-<li><p>
-Spring Data example<div class="ulist">
-<ul>
-<li>main method</li>
-<li>finders</li>
-<li>querydsl</li>
-<li>auditing</li>
-</ul>
-</div></p></li>
-<li><p>
-Web tier<div class="ulist">
-<ul>
-<li>lookup our values</li>
-<li>translate to errors</li>
-<li>Spring Data&#8217;s MVC integration</li>
-</ul>
-</div></p></li>
-<li><p>
-Spring Data Rest<div class="ulist">
-<ul>
-<li>Hateoas</li>
-</ul>
-</div></p></li>
-<li>restshell</li>
-</ul>
-</div>
-</section>
-
-<section class="slide" id="_spring_io">
-<h2>spring.io</h2>
-<div class="paragraph"><p>Who can tell me the components of Spring?</p></div>
 
 <div style="page-break-after: always"></div>
 
+<div class="imageblock">
+<div class="content">
+<img alt="breaking bad logo" height="50%" src="images/breaking-bad-logo.jpeg" width="50%">
+</div>
+</div>
+</section>
+
+<section class="slide" id="__span_class_pe_data_e_16_s_span_pring_io">
+<h2><span class="pe" data-e="16">s</span>pring.io</h2>
+<div class="paragraph"><p>Who can tell me the components of Spring?</p></div>
+</section>
+
+<section class="slide" id="__span_class_pe_data_e_16_s_span_pring_io_2">
+<h2><span class="pe" data-e="16">s</span>pring.io</h2>
 <div class="ulist">
 <ul>
 <li>Core (IoC, AOP, Web)</li>
@@ -104,7 +71,7 @@ Spring Data Rest<div class="ulist">
 </div>
 </section>
 
-<section class="slide canvas-image" id="_spring_io_2" style="background-image: url(images/spring-io.png)">
+<section class="slide canvas-image" id="__span_class_pe_data_e_16_s_span_pring_io_3" style="background-image: url(images/spring-io.png)">
 
 </section>
 
@@ -121,11 +88,48 @@ Spring Data Rest<div class="ulist">
 </div>
 </section>
 
-<section class="slide" id="_standard_jpa">
-<h2>Standard JPA</h2>
+<section class="slide" id="__span_class_pe_data_e_16_s_span_tandard_jpa">
+<h2><span class="pe" data-e="16">S</span>tandard JPA</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>// ... accessor methods omitted ...
+<pre class="prettyprint xml language-xml"><code>&lt;persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0"&gt;
+   &lt;persistence-unit name="jpa"&gt;
+      &lt;class&gt;sample.domain.Message&lt;/class&gt;
+      &lt;class&gt;sample.domain.User&lt;/class&gt;
+      &lt;properties&gt;
+         &lt;property name="javax.persistence.jdbc.driver" value="org.h2.Driver" /&gt;
+            &lt;property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:jpa;DB_CLOSE_DELAY=-1" /&gt;
+            &lt;property name="javax.persistence.jdbc.user" value="sa" /&gt;
+            &lt;property name="javax.persistence.jdbc.password" value="" /&gt;
+            &lt;property name="hibernate.hbm2ddl.auto" value="create" /&gt;
+
+            &lt;property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" /&gt;
+      &lt;/properties&gt;
+  &lt;/persistence-unit&gt;
+&lt;/persistence&gt;</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint java language-java"><code>@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Email(message = "Invalid Email")
+    private String email;
+
+    private String firstName;
+
+    private String lastName;
+    // ... accessor methods omitted ...
 }</code></pre>
 </div>
 </div>
@@ -134,7 +138,17 @@ Spring Data Rest<div class="ulist">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>// ... accessor methods omitted ...
+<pre class="prettyprint java language-java"><code>@Entity
+public class Message {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String text;
+
+    @OneToOne
+    private User to;
+    // ... accessor methods omitted ...
 }</code></pre>
 </div>
 </div>
@@ -143,7 +157,19 @@ Spring Data Rest<div class="ulist">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>// ...
+<pre class="prettyprint java language-java"><code>@Repository
+@Transactional(readOnly = true)
+public class JpaMessageRepository {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    public List&lt;Message&gt; findAll() {
+        TypedQuery&lt;Message&gt; query =
+            em.createQuery("select m from Message m", Message.class);
+        return query.getResultList();
+    }
+    // ...
 }</code></pre>
 </div>
 </div>
@@ -152,7 +178,15 @@ Spring Data Rest<div class="ulist">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>@Transactional
+public Message save(Message account) {
+    if (account.getId() == null) {
+        em.persist(account);
+        return account;
+    } else {
+        return em.merge(account);
+    }
+}</code></pre>
 </div>
 </div>
 
@@ -160,7 +194,14 @@ Spring Data Rest<div class="ulist">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public List&lt;Message&gt; findAll(int page, int pageSize) {
+    TypedQuery&lt;Message&gt; query =
+        em.createQuery("select m from Message m", Message.class);
+    int firstResult = page * pageSize;
+    query.setFirstResult(firstResult);
+    query.setMaxResults(pageSize);
+    return query.getResultList();
+}</code></pre>
 </div>
 </div>
 
@@ -168,7 +209,18 @@ Spring Data Rest<div class="ulist">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>}</code></pre>
+<pre class="prettyprint java language-java"><code>public PagedResponse&lt;Message&gt; findAll(PagedRequest pagedRequest) {
+    int page = pagedRequest.getPageNumber();
+    int pageSize = pagedRequest.getPageSize();
+    TypedQuery&lt;Message&gt; query =
+            em.createQuery("select m from Message m", Message.class);
+    int firstResult = page * pageSize;
+    query.setFirstResult(firstResult);
+    query.setMaxResults(pageSize);
+    List&lt;Message&gt; messages = query.getResultList();
+
+    // ...
+}</code></pre>
 </div>
 </div>
 
@@ -176,7 +228,19 @@ Spring Data Rest<div class="ulist">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public PagedResponse&lt;Message&gt; findAll(PagedRequest pagedRequest) {
+    // ...
+    CriteriaBuilder builder = em.getCriteriaBuilder();
+    CriteriaQuery&lt;Long&gt; countQuery =
+        builder.createQuery(Long.class);
+    Root&lt;Message&gt; from = countQuery.from(Message.class);
+    Expression&lt;Long&gt; count = builder.count(from);
+    countQuery.select(count);
+    Long total =
+        em.createQuery(countQuery).getSingleResult();
+
+    return new PagedResponse&lt;Message&gt;(messages, pagedRequest, total);
+}</code></pre>
 </div>
 </div>
 
@@ -197,11 +261,116 @@ Could create generic DAO<div class="ulist">
 </div>
 </section>
 
-<section class="slide" id="_spring_data_repositories">
-<h2>Spring Data Repositories</h2>
+<section class="slide" id="_caught_with_pants_down">
+<h2>Caught with pants down?</h2>
+<div class="imageblock">
+<div class="content">
+<img alt="pants down" src="images/pants-down.jpg">
+</div>
+</div>
+
+<div class="paragraph"><p><em>Good job wearing the pants in the family!</em> - Jessie</p></div>
+</section>
+
+<section class="slide" id="__span_class_pe_data_e_16_s_span_pring_data_initialization">
+<h2><span class="pe" data-e="16">S</span>pring Data Initialization</h2>
+<div class="listingblock">
+<div class="title">Standalone Initialization</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>EntityManagerFactory emf =
+    Persistence.createEntityManagerFactory("jpa");
+EntityManager entityManager =
+    emf.createEntityManager();
+RepositoryFactorySupport factory =
+    new JpaRepositoryFactory(entityManager);
+
+MessageRepository messageRepository =
+    factory.getRepository(MessageRepository.class);</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="paragraph"><p>Spring Data&#8217;s <code>JpaRepositoryExtension</code> will automatically integrate Spring Data with CDI.</p></div>
+
+<div class="listingblock">
+<div class="title">CDI integration</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>class EntityManagerFactoryProducer {
+
+  @Produces
+  @ApplicationScoped
+  public EntityManagerFactory createEntityManagerFactory() {
+    return Persistence.createEntityManagerFactory("my-presistence-unit");
+  }
+
+  public void close(@Disposes EntityManagerFactory entityManagerFactory) {
+    entityManagerFactory.close();
+  }
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">CDI consumption</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>class RepositoryClient {
+
+  @Inject
+  UserRepository repository;
+
+  public void businessMethod() {
+
+    List&lt;User&gt; users = repository.findAll();
+  }
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Spring Java Configuration</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>@Configuration
+@EnableJpaRepositories
+public class DataConfiguration {
+    // ... standard JPA initialization ...
+}</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Spring XML Configuration</div>
+<div class="content">
+<pre class="prettyprint xml language-xml"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns="http://www.springframework.org/schema/data/jpa"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/data/jpa
+    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"&gt;
+
+  &lt;repositories base-package="com.acme.repositories" /&gt;
+
+&lt;/beans:beans&gt;</code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="__span_class_pe_data_e_16_s_span_pring_data_span_class_pe_data_e_75_re_span_positories">
+<h2><span class="pe" data-e="16">S</span>pring Data <span class="pe" data-e="75">Re</span>positories</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public interface UserRepository
+        extends PagingAndSortingRepository&lt;User, Long&gt; {
+
+}</code></pre>
 </div>
 </div>
 
@@ -216,91 +385,131 @@ Could create generic DAO<div class="ulist">
 <div style="page-break-after: always"></div>
 
 <div class="listingblock">
+<div class="title">Spring Bean consumption</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
-</div>
-</div>
+<pre class="prettyprint java language-java"><code>class RepositoryClient {
 
-<div style="page-break-after: always"></div>
+  @Inject // can also use @Autowired
+  UserRepository repository;
 
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+  public void businessMethod() {
+
+    List&lt;User&gt; users = repository.findAll();
+  }
+}</code></pre>
 </div>
 </div>
 </section>
 
-<section class="slide" id="_property_expressions">
-<h2>Property Expressions</h2>
-<div class="listingblock">
+<section class="slide" id="_look_ma_no_implementation">
+<h2>Look ma&#8230;no implementation</h2>
+<div class="paragraph slide"><p>Where did my implementation go?</p></div>
+
+<div class="listingblock slide">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code><strong>@EnableJpaRepositories</strong>
+public class DataConfiguration {</code></pre>
 </div>
 </div>
 </section>
 
-<section class="slide" id="_paging_and_sorting">
-<h2>Paging and Sorting</h2>
-<div class="listingblock">
+<section class="slide" id="_yeah_science">
+<h2>Yeah science!</h2>
+<div class="imageblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
-</div>
-</div>
-
-<div style="page-break-after: always"></div>
-
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
-</div>
-</div>
-
-<div style="page-break-after: always"></div>
-
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<img alt="yeah science" src="images/yeah-science.jpg">
 </div>
 </div>
 </section>
 
-<section class="slide" id="_naming_conventions">
-<h2>Naming Conventions</h2>
+<section class="slide" id="__span_class_pe_data_e_16_na_span_mming_span_class_pe_data_e_27_co_span_nventions">
+<h2><span class="pe" data-e="16">Na</span>mming <span class="pe" data-e="27">Co</span>nventions</h2>
 <div class="listingblock">
-<div class="title">Find by multiple properties</div>
+<div class="title">Many methods defined <code>CrudRepository</code> and <code>PagingAndSortingRepository</code></div>
 <div class="content">
-<pre class="prettyprint java language-java"><code>// Find by two properties
-List&lt;User&gt; findByEmailAndLastName(String email, String lastName);</code></pre>
+<pre class="prettyprint java language-java"><code>List&lt;User&gt; findAll();
+
+User findOne(Long id);
+
+User save(User user);
+
+Page&lt;User&gt; findAll(Pageable pageable);</code></pre>
 </div>
 </div>
 
 <div style="page-break-after: always"></div>
 
 <div class="listingblock">
-<div class="title">Starts With</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
-</div>
-</div>
+<pre class="prettyprint java language-java"><code>User toSave = new User();
+toSave.setEmail("tosave@example.com");
+toSave.setFirstName("Two");
+toSave.setLastName("Save");
 
-<div class="listingblock">
-<div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+// create the user
+User saved = repository.save(toSave);
+
+// fix the firstName
+saved.setFirstName("To");
+
+// update the user
+saved = repository.save(saved);</code></pre>
 </div>
 </div>
 
 <div style="page-break-after: always"></div>
 
 <div class="listingblock">
-<div class="title">Like</div>
+<div class="title">User</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public class User {
+    private String <strong>lastName</strong>;
+
+    // ...
+}</code></pre>
 </div>
 </div>
 
-<div class="listingblock">
+<div class="listingblock slide">
+<div class="title">Find by lastName</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>List&lt;User&gt; findBy<strong>LastName</strong>(String lastName);</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Naming convention for using Starts With</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>List&lt;User&gt; findByLastNameStartsWith(String lastName);</code></pre>
+</div>
+</div>
+
+<div class="listingblock slide">
+<div class="title">Example usage</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>// finds Users with lastName that starts
+// with "W"
+List&lt;User&gt; users = repsitory.findByLastNameStartsWith("W");</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Naming convention for using Like</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>List&lt;User&gt; findByLastNameLike(String lastName);</code></pre>
+</div>
+</div>
+
+<div class="listingblock slide">
+<div class="title">Example usage</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>// finds Users with lastName that starts
+// with "W" and ends with "h"
+List&lt;User&gt; users = repsitory.findByLastNameLike("W%h");</code></pre>
 </div>
 </div>
 
@@ -309,7 +518,11 @@ List&lt;User&gt; findByEmailAndLastName(String email, String lastName);</code></
 <div class="listingblock">
 <div class="title">Find ignoring case</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>// Enabling ignoring case for an individual property
+List&lt;User&gt; findByLastNameIgnoreCase(String lastName);
+
+// Enabling ignoring case for all suitable properties
+List&lt;User&gt; findByFirstNameAndLastNameAllIgnoreCase(String firstName, String lastName);</code></pre>
 </div>
 </div>
 
@@ -325,11 +538,101 @@ List&lt;User&gt; findByLastNameOrderByFirstNameAsc(String lastName);</code></pre
 
 <div style="page-break-after: always"></div>
 
+<div class="listingblock">
+<div class="title">Find by multiple properties</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>// Find by two properties
+List&lt;User&gt; findByEmailAndLastName(String email, String lastName);</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="paragraph"><p>Property Expressions</p></div>
+
+<div class="listingblock">
+<div class="title">Message</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>public class Message {
+    private User <strong>to</strong>;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+
+<div class="listingblock slide">
+<div class="title">User</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>public class User {
+    private String <strong>lastName</strong>;
+
+    // ...
+}</code></pre>
+</div>
+</div>
+
+<div class="listingblock slide">
+<div class="content">
+<pre class="prettyprint java language-java"><code>// Message.to.lastName == lastName
+List&lt;Message&gt; findByToLastName(String lastName);</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Sorting</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>List&lt;User&gt; findByLastNameStartsWith(String lastName, Sort sort);</code></pre>
+</div>
+</div>
+
+<div class="listingblock slide">
+<div class="title">Example Usage</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>Sort sort =
+    new Sort(Direction.ASC, "firstName");
+List&lt;User&gt; users =
+    repository.findByLastNameStartsWith("W", sort);
+
+long totalMatches = users.size();
+
+// ... use users ...</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
+<div class="listingblock">
+<div class="title">Paging</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>Page&lt;User&gt; findByLastNameStartsWith(String lastName, Pageable pageable);</code></pre>
+</div>
+</div>
+
+<div class="listingblock slide">
+<div class="title">Example Usage</div>
+<div class="content">
+<pre class="prettyprint java language-java"><code>PageRequest pageable =
+    new PageRequest(1, 10, Direction.ASC, "firstName");
+Page&lt;User&gt; users =
+    repository.findByLastNameStartsWith("W", pageable);
+
+List&lt;User&gt; result = users.getContent();
+long totalMatches = users.getTotalElements();
+
+// ... Page has many other methods on it ...</code></pre>
+</div>
+</div>
+
+<div style="page-break-after: always"></div>
+
 <div class="paragraph"><p>Refer to the reference for <a href="http://docs.spring.io/spring-data/jpa/docs/1.4.2.RELEASE/reference/htmlsingle/#d0e1509">more</a> samples</p></div>
 </section>
 
-<section class="slide" id="_named_queries">
-<h2>Named Queries</h2>
+<section class="slide" id="__span_class_pe_data_e_16_na_span_med_queries">
+<h2><span class="pe" data-e="16">Na</span>med Queries</h2>
 <div class="paragraph"><p>Method names can get quite long and complex when using conventions</p></div>
 
 <div style="page-break-after: always"></div>
@@ -366,6 +669,15 @@ public interface UserRepository extends JpaRepository&lt;<strong>User</strong>, 
              + " u.firstName = ?1 and u.lastName = ?2")
   User findByName(String firstName, String lastName);
 }</code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_i_ve_won">
+<h2>I&#8217;ve Won</h2>
+<div class="imageblock">
+<div class="content">
+<img alt="ive won" height="50%" src="images/ive-won.jpg" width="50%">
 </div>
 </div>
 </section>
@@ -434,7 +746,10 @@ Support for many data stores<div class="ulist">
 <h2>Querydsl</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public static BooleanExpression firstNameLike(String prefix) {
+    QUser user = QUser.user;
+    return user.firstName.startsWithIgnoreCase(prefix);
+}</code></pre>
 </div>
 </div>
 </section>
@@ -443,7 +758,10 @@ Support for many data stores<div class="ulist">
 <h2>Querydsl</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public static BooleanExpression lastNameLike(String prefix) {
+    QUser user = QUser.user;
+    return user.lastName.startsWithIgnoreCase(prefix);
+}</code></pre>
 </div>
 </div>
 </section>
@@ -452,7 +770,10 @@ Support for many data stores<div class="ulist">
 <h2>Querydsl</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>Predicate predicate =
+    firstNameLike("R");
+Page&lt;User&gt; users =
+    userRepository.findAll(predicate, page);</code></pre>
 </div>
 </div>
 </section>
@@ -462,7 +783,10 @@ Support for many data stores<div class="ulist">
 <div class="listingblock">
 <div class="title">First and Last</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>Predicate predicate =
+    firstNameLike("R").and(lastNameLike("W"));
+Page&lt;User&gt; users =
+    userRepository.findAll(predicate, page);</code></pre>
 </div>
 </div>
 </section>
@@ -472,91 +796,16 @@ Support for many data stores<div class="ulist">
 <div class="listingblock">
 <div class="title">First or Last</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>Predicate predicate =
+    firstNameLike("R").or(lastNameLike("W"));
+Page&lt;User&gt; users =
+    userRepository.findAll(predicate, page);</code></pre>
 </div>
 </div>
 </section>
 
-<section class="slide" id="_spring_data_initialization">
-<h2>Spring Data Initialization</h2>
-<div class="listingblock">
-<div class="title">Standalone Initialization</div>
-<div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
-</div>
-</div>
-
-<div style="page-break-after: always"></div>
-
-<div class="listingblock">
-<div class="title">CDI integration</div>
-<div class="content">
-<pre class="prettyprint java language-java"><code>class EntityManagerFactoryProducer {
-
-  @Produces
-  @ApplicationScoped
-  public EntityManagerFactory createEntityManagerFactory() {
-    return Persistence.createEntityManagerFactory("my-presistence-unit");
-  }
-
-  public void close(@Disposes EntityManagerFactory entityManagerFactory) {
-    entityManagerFactory.close();
-  }
-}</code></pre>
-</div>
-</div>
-
-<div style="page-break-after: always"></div>
-
-<div class="listingblock">
-<div class="title">CDI consumption</div>
-<div class="content">
-<pre class="prettyprint java language-java"><code>class RepositoryClient {
-
-  @Inject
-  UserRepository repository;
-
-  public void businessMethod() {
-
-    List&lt;User&gt; users = repository.findAll();
-  }
-}</code></pre>
-</div>
-</div>
-
-<div style="page-break-after: always"></div>
-
-<div class="listingblock">
-<div class="title">Spring Java Configuration</div>
-<div class="content">
-<pre class="prettyprint java language-java"><code>// ... standard JPA initialization ...
-}</code></pre>
-</div>
-</div>
-
-<div style="page-break-after: always"></div>
-
-<div class="listingblock">
-<div class="title">Spring XML Configuration</div>
-<div class="content">
-<pre class="prettyprint xml language-xml"><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
-&lt;beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://www.springframework.org/schema/data/jpa"
-  xsi:schemaLocation="http://www.springframework.org/schema/beans
-    http://www.springframework.org/schema/beans/spring-beans.xsd
-    http://www.springframework.org/schema/data/jpa
-    http://www.springframework.org/schema/data/jpa/spring-jpa.xsd"&gt;
-
-  &lt;repositories base-package="com.acme.repositories" /&gt;
-
-&lt;/beans:beans&gt;</code></pre>
-</div>
-</div>
-</section>
-
-<section class="slide" id="_populating_data_stores">
-<h2>Populating Data Stores</h2>
+<section class="slide" id="__span_class_pe_data_e_84_po_span_pulating_data_span_class_pe_data_e_16_s_span_tores">
+<h2><span class="pe" data-e="84">Po</span>pulating Data <span class="pe" data-e="16">S</span>tores</h2>
 <div class="paragraph"><p>Possible to populate data stores with XML or JSON</p></div>
 
 <div class="listingblock">
@@ -564,14 +813,14 @@ Support for many data stores<div class="ulist">
 <div class="content">
 <pre class="prettyprint json language-json"><code>[ {
   "_class" : "sample.domain.User",
-  "firstName" : "Rob",
-  "lastName" : "Winch",
-  "email" : "rob@example.com"
+  "firstName" : "Jon",
+  "lastName" : "Doe",
+  "email" : "jon@example.com"
 }, {
   "_class" : "sample.domain.User",
-  "firstName" : "Oliver",
-  "lastName" : "Gierke",
-  "email" : "ollie@example.com"
+  "firstName" : "Bob",
+  "lastName" : "Barker",
+  "email" : "bob@example.com"
 }]</code></pre>
 </div>
 </div>
@@ -581,7 +830,15 @@ Support for many data stores<div class="ulist">
 <div class="listingblock">
 <div class="title">Sample Java Configuration</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>@Bean
+public JacksonRepositoryPopulatorFactoryBean jsonPopulator() {
+    JacksonRepositoryPopulatorFactoryBean result =
+        new JacksonRepositoryPopulatorFactoryBean();
+    Resource[] resources =
+        new Resource[] { new ClassPathResource("data.json") };
+    result.setResources(resources);
+    return result;
+}</code></pre>
 </div>
 </div>
 
@@ -605,8 +862,8 @@ Support for many data stores<div class="ulist">
 </div>
 </section>
 
-<section class="slide" id="_web_teir">
-<h2>Web Teir</h2>
+<section class="slide" id="__span_class_pe_data_e_74_w_span_eb_span_class_pe_data_e_22_ti_span_er">
+<h2><span class="pe" data-e="74">W</span>eb <span class="pe" data-e="22">Ti</span>er</h2>
 <div class="listingblock">
 <div class="content">
 <pre class="prettyprint java language-java"><code>@Inject
@@ -623,8 +880,8 @@ public User view(@PathParam("id") Long id) {
 </div>
 </section>
 
-<section class="slide" id="_spring_web_mvc">
-<h2>Spring Web MVC</h2>
+<section class="slide" id="__span_class_pe_data_e_16_s_span_pring_span_class_pe_data_e_74_w_span_eb_mvc">
+<h2><span class="pe" data-e="16">S</span>pring <span class="pe" data-e="74">W</span>eb MVC</h2>
 <div class="paragraph"><p>Easier in Spring MVC</p></div>
 
 <div class="listingblock">
@@ -708,8 +965,21 @@ public String showUsers(Model model, Pageable pageable) {
 </table>
 </section>
 
-<section class="slide" id="_spring_data_rest">
-<h2>Spring Data Rest</h2>
+<section class="slide" id="__span_class_pe_data_e_1_h_span_ow_much_is_enough">
+<h2><span class="pe" data-e="1">H</span>ow much is enough?</h2>
+<div class="imageblock">
+<div class="content">
+<img alt="greedy" src="images/greedy.jpg">
+</div>
+</div>
+
+<div class="paragraph"><p><em>Please tell me…how much is enough?</em> - Skyler</p></div>
+
+<div class="paragraph slide"><p><em>We’re done when I say we’re done.</em> - Walter</p></div>
+</section>
+
+<section class="slide" id="__span_class_pe_data_e_16_s_span_pring_data_span_class_pe_data_e_75_re_span_st">
+<h2><span class="pe" data-e="16">S</span>pring Data <span class="pe" data-e="75">Re</span>st</h2>
 <div class="ulist">
 <ul>
 <li>Maps Spring Data Repository instances to RESTful endpoints</li>
@@ -748,20 +1018,38 @@ public interface MessageRepository
 </div>
 </section>
 
-<section class="slide" id="_notes">
-<h2>NOTES</h2>
+<section class="slide" id="_rest_shell">
+<h2>rest-shell</h2>
+<div class="listingblock">
+<div class="content">
+<pre class="prettyprint bash language-bash"><code>$ rest-shell
+
+ ___ ___  __ _____  __  _  _     _ _  __
+| _ \ __/' _/_   _/' _/| || |   / / | \ \
+| v / _|`._`. | | `._`.| &gt;&lt; |  / / /   &gt; &gt;
+|_|_\___|___/ |_| |___/|_||_| |_/_/   /_/
+1.2.1.RELEASE
+
+Welcome to the REST shell. For assistance hit TAB or type "help".
+http://localhost:8080:&gt; discover
+rel         href
+==========================================
+user        http://localhost:8080/user
+messages    http://localhost:8080/messages</code></pre>
+</div>
+</div>
+</section>
+
+<section class="slide" id="_learn_more_stay_connected">
+<h2>Learn More. Stay Connected.</h2>
 <div class="ulist">
 <ul>
-<li>Caught with pants down</li>
-<li>Greedy "How much is enough?"</li>
+<li><a href="http://rwinch.github.io/springdata-gateway-drug/">http://rwinch.github.io/springdata-gateway-drug/</a></li>
+<li>Spring Data: <a href="http://spring.io/spring-data">http://spring.io/spring-data</a></li>
+<li>Twitter: @SpringData / @rob_winch / @springcentral</li>
+<li>Find Talks on YouTube: spring.io/video</li>
 </ul>
 </div>
-
-<div class="paragraph"><p>Quotes
-* Saul: That’s what the kids call ‘epic fail.’
-* Saul - Look, let’s start with some tough love.
-* Walter: We’re done when I say we’re done.
-* Jesse: Yeah, Mr. White! Yeah, science!</p></div>
 </section>
 
 <a class="deck-permalink" href="." title="Permalink to this slide">#</a>

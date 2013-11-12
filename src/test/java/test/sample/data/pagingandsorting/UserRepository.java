@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package sample.data.pagingandsorting;
+package test.sample.data.pagingandsorting;
 
 import java.util.List;
 
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,16 +25,15 @@ import org.springframework.stereotype.Component;
 
 import sample.domain.User;
 
-@Profile("test")
 @Component("pagingandsorting.UserRepository")
 public interface UserRepository
         extends PagingAndSortingRepository<User, Long> {
 
-    // tag::methods[]
-    // allow sorting
+    // tag::sorting[]
     List<User> findByLastNameStartsWith(String lastName, Sort sort);
+    // end::sorting[]
 
-    // allow sorting and paging
+    // tag::paging[]
     Page<User> findByLastNameStartsWith(String lastName, Pageable pageable);
-    // end::methods[]
+    // end::paging[]
 }
