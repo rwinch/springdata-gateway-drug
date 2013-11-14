@@ -740,7 +740,8 @@ messages    http://localhost:8080/messages
 
 == Learn More. Stay Connected.
 
-* http://rwinch.github.io/springdata-gateway-drug/
+* Sample Code http://github.com/rwinch/springdata-gateway-drug/
+* Slides http://rwinch.github.io/springdata-gateway-drug/
 * Spring Data: http://spring.io/spring-data
 * Twitter: @SpringData / @rob_winch / @springcentral
 * Find Talks on YouTube: spring.io/video
