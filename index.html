@@ -92,7 +92,24 @@ Co-author of Spring Security 3.1 book<div class="imageblock">
 <h2><span class="pe" data-e="16">S</span>tandard JPA</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint xml language-xml"><code></code></pre>
+<pre class="prettyprint xml language-xml"><code>&lt;persistence xmlns="http://java.sun.com/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+             version="2.0"&gt;
+   &lt;persistence-unit name="jpa"&gt;
+      &lt;class&gt;sample.domain.Message&lt;/class&gt;
+      &lt;class&gt;sample.domain.User&lt;/class&gt;
+      &lt;properties&gt;
+         &lt;property name="javax.persistence.jdbc.driver" value="org.h2.Driver" /&gt;
+            &lt;property name="javax.persistence.jdbc.url" value="jdbc:h2:mem:jpa;DB_CLOSE_DELAY=-1" /&gt;
+            &lt;property name="javax.persistence.jdbc.user" value="sa" /&gt;
+            &lt;property name="javax.persistence.jdbc.password" value="" /&gt;
+            &lt;property name="hibernate.hbm2ddl.auto" value="create" /&gt;
+
+            &lt;property name="hibernate.dialect" value="org.hibernate.dialect.H2Dialect" /&gt;
+      &lt;/properties&gt;
+  &lt;/persistence-unit&gt;
+&lt;/persistence&gt;</code></pre>
 </div>
 </div>
 
@@ -100,7 +117,19 @@ Co-author of Spring Security 3.1 book<div class="imageblock">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>// ... accessor methods omitted ...
+<pre class="prettyprint java language-java"><code>@Entity
+public class User {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Email(message = "Invalid Email")
+    private String email;
+
+    private String firstName;
+
+    private String lastName;
+    // ... accessor methods omitted ...
 }</code></pre>
 </div>
 </div>
@@ -109,7 +138,17 @@ Co-author of Spring Security 3.1 book<div class="imageblock">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>// ... accessor methods omitted ...
+<pre class="prettyprint java language-java"><code>@Entity
+public class Message {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    private String text;
+
+    @OneToOne
+    private User to;
+    // ... accessor methods omitted ...
 }</code></pre>
 </div>
 </div>
@@ -118,7 +157,19 @@ Co-author of Spring Security 3.1 book<div class="imageblock">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>// ...
+<pre class="prettyprint java language-java"><code>@Repository
+@Transactional(readOnly = true)
+public class JpaMessageRepository {
+
+    @PersistenceContext
+    private EntityManager em;
+
+    public List&lt;Message&gt; findAll() {
+        TypedQuery&lt;Message&gt; query =
+            em.createQuery("select m from Message m", Message.class);
+        return query.getResultList();
+    }
+    // ...
 }</code></pre>
 </div>
 </div>
@@ -127,7 +178,15 @@ Co-author of Spring Security 3.1 book<div class="imageblock">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>@Transactional
+public Message save(Message account) {
+    if (account.getId() == null) {
+        em.persist(account);
+        return account;
+    } else {
+        return em.merge(account);
+    }
+}</code></pre>
 </div>
 </div>
 
@@ -135,7 +194,14 @@ Co-author of Spring Security 3.1 book<div class="imageblock">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public List&lt;Message&gt; findAll(int page, int pageSize) {
+    TypedQuery&lt;Message&gt; query =
+        em.createQuery("select m from Message m", Message.class);
+    int firstResult = page * pageSize;
+    query.setFirstResult(firstResult);
+    query.setMaxResults(pageSize);
+    return query.getResultList();
+}</code></pre>
 </div>
 </div>
 
@@ -143,7 +209,18 @@ Co-author of Spring Security 3.1 book<div class="imageblock">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code>}</code></pre>
+<pre class="prettyprint java language-java"><code>public PagedResponse&lt;Message&gt; findAll(PagedRequest pagedRequest) {
+    int page = pagedRequest.getPageNumber();
+    int pageSize = pagedRequest.getPageSize();
+    TypedQuery&lt;Message&gt; query =
+            em.createQuery("select m from Message m", Message.class);
+    int firstResult = page * pageSize;
+    query.setFirstResult(firstResult);
+    query.setMaxResults(pageSize);
+    List&lt;Message&gt; messages = query.getResultList();
+
+    // ...
+}</code></pre>
 </div>
 </div>
 
@@ -151,7 +228,19 @@ Co-author of Spring Security 3.1 book<div class="imageblock">
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public PagedResponse&lt;Message&gt; findAll(PagedRequest pagedRequest) {
+    // ...
+    CriteriaBuilder builder = em.getCriteriaBuilder();
+    CriteriaQuery&lt;Long&gt; countQuery =
+        builder.createQuery(Long.class);
+    Root&lt;Message&gt; from = countQuery.from(Message.class);
+    Expression&lt;Long&gt; count = builder.count(from);
+    countQuery.select(count);
+    Long total =
+        em.createQuery(countQuery).getSingleResult();
+
+    return new PagedResponse&lt;Message&gt;(messages, pagedRequest, total);
+}</code></pre>
 </div>
 </div>
 
@@ -188,7 +277,15 @@ Could create generic DAO<div class="ulist">
 <div class="listingblock">
 <div class="title">Standalone Initialization</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>EntityManagerFactory emf =
+    Persistence.createEntityManagerFactory("jpa");
+EntityManager entityManager =
+    emf.createEntityManager();
+RepositoryFactorySupport factory =
+    new JpaRepositoryFactory(entityManager);
+
+MessageRepository messageRepository =
+    factory.getRepository(MessageRepository.class);</code></pre>
 </div>
 </div>
 
@@ -237,7 +334,10 @@ Could create generic DAO<div class="ulist">
 <div class="listingblock">
 <div class="title">Spring Java Configuration</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code>// ... standard JPA initialization ...
+<pre class="prettyprint java language-java"><code>@Configuration
+@EnableJpaRepositories
+public class DataConfiguration {
+    // ... standard JPA initialization ...
 }</code></pre>
 </div>
 </div>
@@ -267,7 +367,10 @@ Could create generic DAO<div class="ulist">
 <h2><span class="pe" data-e="16">S</span>pring Data <span class="pe" data-e="75">Re</span>positories</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public interface UserRepository
+        extends PagingAndSortingRepository&lt;User, Long&gt; {
+
+}</code></pre>
 </div>
 </div>
 
@@ -338,7 +441,19 @@ Page&lt;User&gt; findAll(Pageable pageable);</code></pre>
 
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>User toSave = new User();
+toSave.setEmail("tosave@example.com");
+toSave.setFirstName("Two");
+toSave.setLastName("Save");
+
+// create the user
+User saved = repository.save(toSave);
+
+// fix the firstName
+saved.setFirstName("To");
+
+// update the user
+saved = repository.save(saved);</code></pre>
 </div>
 </div>
 
@@ -367,14 +482,16 @@ Page&lt;User&gt; findAll(Pageable pageable);</code></pre>
 <div class="listingblock">
 <div class="title">Naming convention for using Starts With</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>List&lt;User&gt; findByLastNameStartsWith(String lastName);</code></pre>
 </div>
 </div>
 
 <div class="listingblock slide">
 <div class="title">Example usage</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>// finds Users with lastName that starts
+// with "W"
+List&lt;User&gt; users = repsitory.findByLastNameStartsWith("W");</code></pre>
 </div>
 </div>
 
@@ -383,14 +500,16 @@ Page&lt;User&gt; findAll(Pageable pageable);</code></pre>
 <div class="listingblock">
 <div class="title">Naming convention for using Like</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>List&lt;User&gt; findByLastNameLike(String lastName);</code></pre>
 </div>
 </div>
 
 <div class="listingblock slide">
 <div class="title">Example usage</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>// finds Users with lastName that starts
+// with "W" and ends with "h"
+List&lt;User&gt; users = repsitory.findByLastNameLike("W%h");</code></pre>
 </div>
 </div>
 
@@ -399,7 +518,11 @@ Page&lt;User&gt; findAll(Pageable pageable);</code></pre>
 <div class="listingblock">
 <div class="title">Find ignoring case</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>// Enabling ignoring case for an individual property
+List&lt;User&gt; findByLastNameIgnoreCase(String lastName);
+
+// Enabling ignoring case for all suitable properties
+List&lt;User&gt; findByFirstNameAndLastNameAllIgnoreCase(String firstName, String lastName);</code></pre>
 </div>
 </div>
 
@@ -451,7 +574,8 @@ List&lt;User&gt; findByEmailAndLastName(String email, String lastName);</code></
 
 <div class="listingblock slide">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>// Message.to.lastName == lastName
+List&lt;Message&gt; findByToLastName(String lastName);</code></pre>
 </div>
 </div>
 
@@ -460,14 +584,21 @@ List&lt;User&gt; findByEmailAndLastName(String email, String lastName);</code></
 <div class="listingblock">
 <div class="title">Sorting</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>List&lt;User&gt; findByLastNameStartsWith(String lastName, Sort sort);</code></pre>
 </div>
 </div>
 
 <div class="listingblock slide">
 <div class="title">Example Usage</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>Sort sort =
+    new Sort(Direction.ASC, "firstName");
+List&lt;User&gt; users =
+    repository.findByLastNameStartsWith("W", sort);
+
+long totalMatches = users.size();
+
+// ... use users ...</code></pre>
 </div>
 </div>
 
@@ -476,14 +607,22 @@ List&lt;User&gt; findByEmailAndLastName(String email, String lastName);</code></
 <div class="listingblock">
 <div class="title">Paging</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>Page&lt;User&gt; findByLastNameStartsWith(String lastName, Pageable pageable);</code></pre>
 </div>
 </div>
 
 <div class="listingblock slide">
 <div class="title">Example Usage</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>PageRequest pageable =
+    new PageRequest(1, 10, Direction.ASC, "firstName");
+Page&lt;User&gt; users =
+    repository.findByLastNameStartsWith("W", pageable);
+
+List&lt;User&gt; result = users.getContent();
+long totalMatches = users.getTotalElements();
+
+// ... Page has many other methods on it ...</code></pre>
 </div>
 </div>
 
@@ -607,7 +746,10 @@ Support for many data stores<div class="ulist">
 <h2>Querydsl</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public static BooleanExpression firstNameLike(String prefix) {
+    QUser user = QUser.user;
+    return user.firstName.startsWithIgnoreCase(prefix);
+}</code></pre>
 </div>
 </div>
 </section>
@@ -616,7 +758,10 @@ Support for many data stores<div class="ulist">
 <h2>Querydsl</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>public static BooleanExpression lastNameLike(String prefix) {
+    QUser user = QUser.user;
+    return user.lastName.startsWithIgnoreCase(prefix);
+}</code></pre>
 </div>
 </div>
 </section>
@@ -625,7 +770,10 @@ Support for many data stores<div class="ulist">
 <h2>Querydsl</h2>
 <div class="listingblock">
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>Predicate predicate =
+    firstNameLike("R");
+Page&lt;User&gt; users =
+    userRepository.findAll(predicate, page);</code></pre>
 </div>
 </div>
 </section>
@@ -635,7 +783,10 @@ Support for many data stores<div class="ulist">
 <div class="listingblock">
 <div class="title">First and Last</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>Predicate predicate =
+    firstNameLike("R").and(lastNameLike("W"));
+Page&lt;User&gt; users =
+    userRepository.findAll(predicate, page);</code></pre>
 </div>
 </div>
 </section>
@@ -645,7 +796,10 @@ Support for many data stores<div class="ulist">
 <div class="listingblock">
 <div class="title">First or Last</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>Predicate predicate =
+    firstNameLike("R").or(lastNameLike("W"));
+Page&lt;User&gt; users =
+    userRepository.findAll(predicate, page);</code></pre>
 </div>
 </div>
 </section>
@@ -657,7 +811,17 @@ Support for many data stores<div class="ulist">
 <div class="listingblock">
 <div class="title">data.json</div>
 <div class="content">
-<pre class="prettyprint json language-json"><code></code></pre>
+<pre class="prettyprint json language-json"><code>[ {
+  "_class" : "sample.domain.User",
+  "firstName" : "Jon",
+  "lastName" : "Doe",
+  "email" : "jon@example.com"
+}, {
+  "_class" : "sample.domain.User",
+  "firstName" : "Bob",
+  "lastName" : "Barker",
+  "email" : "bob@example.com"
+}]</code></pre>
 </div>
 </div>
 
@@ -666,7 +830,15 @@ Support for many data stores<div class="ulist">
 <div class="listingblock">
 <div class="title">Sample Java Configuration</div>
 <div class="content">
-<pre class="prettyprint java language-java"><code></code></pre>
+<pre class="prettyprint java language-java"><code>@Bean
+public JacksonRepositoryPopulatorFactoryBean jsonPopulator() {
+    JacksonRepositoryPopulatorFactoryBean result =
+        new JacksonRepositoryPopulatorFactoryBean();
+    Resource[] resources =
+        new Resource[] { new ClassPathResource("data.json") };
+    result.setResources(resources);
+    return result;
+}</code></pre>
 </div>
 </div>
 
